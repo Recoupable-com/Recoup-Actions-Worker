@@ -1,0 +1,71 @@
+sequenceDiagram
+    participant Client
+    participant API as /api/create_report
+    participant DB as Supabase
+    participant Report as Report Generator
+    participant Email as Email Service
+    participant Logger as Logger Service
+
+    Client->>API: POST /api/create_report
+    Note over Client,API: {segmentId}
+    
+    alt Invalid Parameters
+        API-->>Client: Return error response (400)<br/>Missing segmentId
+    end
+
+    API->>DB: getArtistBySegmentId(segmentId)
+    DB-->>API: Return artistAccountId
+    
+    alt Artist Not Found
+        API-->>Client: Return error response (404)<br/>Artist not found for segment
+    end
+
+    API->>DB: getArtistEmails(artistAccountId)
+    DB-->>API: Return emails[]
+    
+    alt No Emails Found
+        API-->>Client: Return error response (404)<br/>No emails found for artist
+    end
+
+    API->>DB: createReport(artistAccountId)
+    DB-->>API: Return reportId
+    API-->>Client: Return {reportId}
+
+    Note over API: Async Processing Begins
+
+    par Async Report Generation
+        API->>DB: getArtistSegmentComments(artistAccountId, segmentId)
+        Note over DB: 1. Get segment name<br/>2. Get account socials<br/>3. Get fans in segment<br/>4. Get comments from fans
+        DB-->>API: Return {comments, socialMetrics, segmentName}
+
+        API->>Report: Generate report content
+        Note over Report: Process comments<br/>Calculate segment metrics<br/>Format report data
+        Report-->>API: Return {reportContent, nextSteps}
+
+        API->>DB: updateReport(reportId, content)
+        DB-->>API: Confirm update
+
+        loop For each email
+            API->>Email: sendReportEmail
+            Note over Email: Send with report content,<br/>avatar, username, and segment name
+            Email-->>API: Confirm sent
+        end
+
+        alt Report Generation Error
+            API->>Logger: Log error details
+            Note over Logger: Non-blocking error handling
+        end
+    end
+
+    Note over Client,Logger: Error Handling
+    alt Database Error
+        DB-->>API: Database error
+        API->>Logger: Log database error
+        API-->>Client: Return error response (500)
+    else Validation Error
+        API->>Logger: Log validation error
+        API-->>Client: Return error response (400)
+    else Processing Error
+        API->>Logger: Log processing details
+        Note over Logger: Continue async processing
+    end 
