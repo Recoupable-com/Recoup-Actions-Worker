@@ -1,5 +1,8 @@
 import cron from "node-cron";
+import { handleScheduledActions } from "./controllers/CronController";
 
-cron.schedule("* * * * * *", () => {
-  console.log("[Macro Cron] Running every second (all stars)");
+// Runs every 5 seconds
+cron.schedule("*/5 * * * * *", async () => {
+  console.log("[Macro Cron] Running every 5 seconds");
+  await handleScheduledActions();
 });
