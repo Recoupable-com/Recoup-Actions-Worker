@@ -1,8 +1,8 @@
-# Recoup Agent APIs
+# Recoup Actions Worker
 
 ## Overview
 
-The Recoup Agent APIs provide a comprehensive interface for managing and interacting with the wrapped funnel system. This project aims to streamline the process of handling API interactions in a reliable and efficient manner.
+Recoup Actions Worker is a cron-based service designed to run scheduled actions and automations on behalf of musicians. It powers background jobs such as social media data collection, fan engagement, and other recurring tasks, enabling artists to automate their digital workflows and maximize their reach with minimal manual effort.
 
 ## Getting Started
 
@@ -11,8 +11,8 @@ To get started with the Recoup Agent APIs:
 1. Clone the repository
 
 ```bash
-git clone https://github.com/voicefirstai/Recoup-Agent-APIs.git
-cd Recoup-Agent-APIs
+git clone https://github.com/sweetmantech/Recoup-Actions-Worker.git
+cd Recoup-Actions-Worker
 ```
 
 2. Install pnpm (if not already installed)
