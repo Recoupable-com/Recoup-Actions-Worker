@@ -15,7 +15,7 @@ export async function runScheduledAction(
     accountId: action.account_id,
   };
   try {
-    await fetch("https://chat.recoupable.com/api/chat", {
+    await fetch("https://chat.recoupable.com/api/chat/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
