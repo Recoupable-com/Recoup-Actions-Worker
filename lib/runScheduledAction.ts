@@ -6,7 +6,12 @@ export async function runScheduledAction(
   const messages = [
     {
       role: "user",
-      content: action.prompt,
+      parts: [
+        {
+          type: "text",
+          text: action.prompt,
+        },
+      ],
     },
   ];
   const body = {
