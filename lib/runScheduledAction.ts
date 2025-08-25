@@ -18,6 +18,7 @@ export async function runScheduledAction(
     messages,
     artistId: action.artist_account_id,
     accountId: action.account_id,
+    excludeTools: ["create_scheduled_actions"],
   };
   try {
     await fetch("https://chat.recoupable.com/api/chat/generate", {
